@@ -1,0 +1,31 @@
+form .inputs{
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 12px;
+}
+
+#login {
+    margin-top: 10px;
+    text-decoration: none;
+    color: #0095BA;
+    display: flex;
+    justify-content: center;
+}
+
+#titulo {
+    margin-top: 50px;
+    font-size: 26px;
+    text-align: center;
+}
+
+#botaoEnviar {
+    margin-top: 20px;
+    width: 100%;
+    background-color: #0095BA;
+    color: white;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+}

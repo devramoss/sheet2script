@@ -1,0 +1,40 @@
+h2 {
+    font-size: 100px;
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+#sql {
+    color: #01BE62;
+    text-align: center;
+}
+#inputFile{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #E8E8E8; /* Cor de fundo cinza claro */
+    padding:  160px 40px 0px 40px;
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra leve */
+    max-width: 480px; /* Largura máxima da box */
+    margin: 20px auto 0 auto; /* Centraliza horizontalmente */
+    height: 200px;
+}
+#botaoGerar {
+    margin-top: 20px;
+    background-color: #0095BA;
+    color: white;
+    margin-left: 47%;
+    margin-right: 47%;
+    width: 6%;
+}
+
+#background {
+    width: 100%;
+    height: 600px;
+    margin-top: 45px;
+    margin-bottom: 45px;
+}
+

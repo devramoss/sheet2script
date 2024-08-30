@@ -1,0 +1,28 @@
+#inputComando {
+    width: 300px;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 20px 36%;
+    text-align: center;
+}
+
+#botaoGerar {
+    margin-top: 20px;
+    background-color: #0095BA;
+    color: white;
+    margin-left: 47%;
+    margin-right: 47%;
+    width: 6%;
+}
+
+h2 {
+    font-size: 100px;
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+}
