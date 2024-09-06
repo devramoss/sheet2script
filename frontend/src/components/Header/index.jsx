@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';  // Para navegação
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,16 +14,18 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Logo from '../../assets/logo.png';
 
-const pages = ['HOME', 'LOGIN', 'CADASTRO', 'PERFIL'];
+const pages = ['HOME', 'LOGIN', 'CADASTRO', 'CONVERSOR', 'COMANDOS'];
 const settings = ['PERFIL', 'Logout'];
 
 function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();  // Hook para navegação
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -35,21 +38,47 @@ function Header() {
     setAnchorElUser(null);
   };
 
+  // Função para navegação
+  const handleNavigate = (page) => {
+    switch (page) {
+      case 'HOME':
+        navigate('/');
+        break;
+      case 'LOGIN':
+        navigate('/login');
+        break;
+      case 'CONVERSOR':
+          navigate('/conversor');
+          break;
+      case 'COMANDOS':
+            navigate('/escolher-comando');
+            break;
+      case 'CADASTRO':
+        navigate('/cadastro');
+        break;
+      default:
+        navigate('/');
+        break;
+    }
+    handleCloseNavMenu();
+  };
+
   return (
     <AppBar position="static" sx={{ bgcolor: '#ffffff' }}>
       <Container maxWidth="xl" sx={{ bgcolor: '#ffffff' }}>
         <Toolbar disableGutters>
+
           {/* Logo à esquerda */}
           <Box sx={{ flexGrow: 1 }}>
             <img src={Logo} alt="Logo" style={{ width: "90px", height: "90px" }} />
           </Box>
 
-          {/* Menu de navegação à direita */}
+          {/* Menu de navegação à direita para telas maiores */}
           <Box sx={{ flexGrow: 2, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => handleNavigate(page)}  // Chamando navegação
                 sx={{ my: 2, color: '#000000' }}
               >
                 {page}
@@ -88,34 +117,8 @@ function Header() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={() => handleNavigate(page)}>
                   <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-
-          {/* Menu de usuário */}
-          <Box sx={{ flexGrow: 0 }}>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
             </Menu>

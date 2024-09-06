@@ -20,9 +20,29 @@ const Login = () => {
                 senha: '',
             }}
                 validationSchema={schema}
-                onSubmit={(values) => {
-                    console.log(values)
+                onSubmit={async ({ email, senha }) => {
+                    try {
+                        const response = await fetch('http://localhost:3000/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email, senha }),
+                        });
+                
+                        const data = await response.json();
+                
+                        if (response.ok) {
+                            console.log("Login bem-sucedido!", data.token);
+                            localStorage.setItem('token', data.token);
+                        } else {
+                            console.error("Erro ao realizar login:", data.mensagem);
+                        }
+                    } catch (error) {
+                        console.error("Erro na requisição:", error);
+                    }
                 }}
+                
             >
                 {formik => (
                     <Form onSubmit={formik.handleSubmit}>

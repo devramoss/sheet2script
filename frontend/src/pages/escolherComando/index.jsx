@@ -27,7 +27,7 @@ const EscolherComando = () => {
                                     <option value="update">UPDATE</option>
                                     <option value="delete">DELETE</option>
                                 </Field>
-                                <Button id="botaoGerar">
+                                <Button id="botaoGerar" type="submit">
                                     Enviar
                                 </Button>
                             </Form>
