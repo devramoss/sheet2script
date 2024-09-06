@@ -4,14 +4,13 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-
 const realizarLogin = async (req, res) => {
     const {email, senha} = req.body;
     
     if(!email)
-        return res.status(402).json({mensagem: "O email é obrigatório!"});
+        return res.status(400).json({mensagem: "O email é obrigatório!"});
     if(!senha)
-        return res.status(402).json({mensagem: "A senha é obrigatória!"});
+        return res.status(400).json({mensagem: "A senha é obrigatória!"});
 
     // Verificando se o usuario existe
     const usuarioExiste = await Usuario.findOne({where: {email}});
@@ -23,13 +22,14 @@ const realizarLogin = async (req, res) => {
     const verificarSenha = await bcrypt.compare(senha, usuarioExiste.senha);
 
     if(!verificarSenha)
-        return res.status(422).json({mensagem: "Senha incorreta!"});
+        return res.status(401).json({mensagem: "Senha incorreta!"});
 
     try{
-        const secret = process.env.JWT_SECRET;
+        const secret = "jsdajhhdajshdahdasda8723119091874@@@@";
         const token = jwt.sign(
             {id: usuarioExiste.id},
             secret,
+            { expiresIn: '1h' } // Adicionando tempo de expiração
         );
         res.status(200).json({mensagem: "Autenticação realizada com sucesso!", token});
     } catch (error) {
@@ -37,8 +37,6 @@ const realizarLogin = async (req, res) => {
         res.status(500).json({mensagem: "Aconteceu um erro no servidor, tente novamente mais tarde!"});
     }
 }
-
-
 
 module.exports = {
     realizarLogin

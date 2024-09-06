@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 // Configurações do banco de dados
-const sequelize = new Sequelize(process.env.MYSQL_DB, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, {
+const sequelize = new Sequelize("projetoFinal", "root", "admin", {
     host: 'localhost', // Ou o host onde o banco de dados está rodando
     dialect: 'mysql', // Ou outro dialeto suportado, como 'postgres', 'sqlite', 'mssql', etc.
 });
