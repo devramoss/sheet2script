@@ -1,42 +1,55 @@
 import React from "react";
-import Header from "../../components/Header/index.jsx";
-import "./style.css";
-import { Container, Button, Box, Typography} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Container, Button, Typography } from "@mui/material";
 import { Field, Formik, Form } from "formik";
+import Header from "../../components/Header/index.jsx";
+import "./style.css";  // Certifique-se de que o CSS seja importado corretamente
 
 const EscolherComando = () => {
+    // useNavigate para navegar da página comandos para a página conversor
+    const navigate = useNavigate();
+
     return (
         <>
             <Header />
-
-                <Container>
-                    <Typography variant="h2">
-                        SELECIONE O<br/> COMANDO SQL DESEJADO:
-                    </Typography >
-                    <Formik initialValues={{
-                        comando: null
+            <Container className="container-comando">
+                <Typography variant="h2" className="titulo">
+                    SELECIONE O<br /> COMANDO SQL DESEJADO:
+                </Typography>
+                <Formik
+                    initialValues={{
+                        comando: "insert" // Valor padrão para select
                     }}
-                        onSubmit={(values) => {
-                            console.log(values)
-                        }}
-                    >
-                        {(formik) => (
-                            <Form onSubmit={formik.handleSubmit}>
-                                <Field as="select" name="comando" required type="select" id="inputComando">
-                                    <option value="insert">INSERT</option>
-                                    <option value="update">UPDATE</option>
-                                    <option value="delete">DELETE</option>
-                                </Field>
-                                <Button id="botaoGerar" type="submit">
-                                    Enviar
-                                </Button>
-                            </Form>
-                        )}
-                    </Formik>
-                </Container>
+                    onSubmit={(values) => {
+                        // Passando qual comando SQL foi selecionado para a página de conversão
+                        navigate("/conversor", { state: { comando: values.comando } });
 
+                        // Exibindo o tipo de comando selecionado no console
+                        console.log("Comando selecionado:", values.comando);
+                    }}
+                >
+                    {(formik) => (
+                        <Form onSubmit={formik.handleSubmit}>
+                            <Field as="select" name="comando" id="inputComando" className="input-comando">
+                                <option value="insert">
+                                    INSERT
+                                </option>
+                                <option value="update">
+                                    UPDATE
+                                </option>
+                                <option value="delete">
+                                    DELETE
+                                </option>
+                            </Field>
+                            <Button id="botaoGerar" type="submit" className="botao-enviar">
+                                Enviar
+                            </Button>
+                        </Form>
+                    )}
+                </Formik>
+            </Container>
         </>
-    );          
-}
+    );
+};
 
 export default EscolherComando;

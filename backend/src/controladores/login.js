@@ -7,6 +7,7 @@ dotenv.config();
 const realizarLogin = async (req, res) => {
     const {email, senha} = req.body;
     
+    // Verificando se os campos foram preenchidos
     if(!email)
         return res.status(400).json({mensagem: "O email é obrigatório!"});
     if(!senha)
