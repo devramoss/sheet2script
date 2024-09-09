@@ -2,27 +2,22 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-function autenticarToken(req, res, next) {
-  const token = req.headers['authorization'];
+const autenticarToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({
-       error: 'Token não fornecido'
-      });
-  }
+  console.log('Token:', token);
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, usuario) => {
-    if (err) {
-      return res.status(403).json({
-        error: 'Token inválido'
-      });
-    }
+  if (token == null) return res.sendStatus(401);
 
-    req.usuario = usuario;
-    
-    next();
+  jwt.verify(token, 'jsdajhhdajshdahdasda8723119091874@@@@', (err, user) => {
+      if (err) return res.sendStatus(403);
+      console.log('Usuário:', user);
+      req.user = user;
+      next();
   });
-}
+};
+
 
 module.exports = autenticarToken;
 
