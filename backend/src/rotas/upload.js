@@ -1,10 +1,14 @@
 const express = require('express');
-const router = express.Router();
-const { uploadPlanilha } = require('../controladores/planilha');
-const autenticarToken = require('../middleware/autenticarToken');
-//const authMiddleware = require('../middlewares/auth'); // Middleware de autenticação
+const multer = require('multer');
+const storage = require('../config/multer');
+const uploadPlanilha = require('../controladores/planilha'); // Ajuste o caminho conforme a estrutura do seu projeto
 
-// Rota para upload da planilha (protegida com autenticação)
-router.post('/upload', autenticarToken, uploadPlanilha);
+const router = express.Router();
+
+const upload = multer({ storage: storage });
+
+router.post("/upload", upload.single("file"), (req, res) => {
+    uploadPlanilha(req, res);
+});
 
 module.exports = router;
