@@ -10,7 +10,6 @@ const planilhaRoutes = require('./rotas/upload'); // Ajuste o caminho conforme a
 
 const autenticarToken = require("./middleware/autenticarToken");
 
-const upload = multer({ storage: storage });
 const app = express();
 
 const corsOptions = {
@@ -19,13 +18,19 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
+const upload = multer({ storage: storage });
+
 app.use(cors(corsOptions));
-app.use("/upload", planilhaRoutes); // Ajuste conforme a estrutura do seu projeto
-
 app.use(express.json());
-
+app.use("/files", express.static("uploads"));
 app.use("/registro", rotaRegistro);
 app.use("/login", rotaLogin);
 app.use("/usuario/:id", rotaUsuario);
+app.post("/upload", upload.single("file"), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+    }
+    return res.json({ filename: req.file.filename });
+});
 
 module.exports = app;
