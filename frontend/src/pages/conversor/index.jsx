@@ -66,16 +66,17 @@ const Conversor = () => {
     
         // Enviar dados para o servidor
         try {
-            const formData = new FormData();
-            const token = 'jsdajhhdajshdahdasda8723119091874@@@@'
-            formData.append('arquivo', file); // Enviar o arquivo
-            formData.append('tableName', tableName); // Enviar o nome da tabela
-            
-            
+            const formData = new FormData(); 
+            const token = localStorage.getItem('token'); // Recupera o token do localStorage\
 
+            console.log('Token:', token);
+
+            formData.append('file', file); // Enviar o arquivo
+            //formData.append('tableName', tableName); // Enviar o nome da tabela
+            
             const response = await axios.post('http://localhost:3000/upload', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'multipart/form-data', // Define o tipo de conteúdo
                     'Authorization': `Bearer ${token}`, // Envia o token no cabeçalho
                 },
             });
