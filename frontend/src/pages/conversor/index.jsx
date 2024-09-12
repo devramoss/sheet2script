@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import Header from '../../components/Header/index.jsx';
 import { Container, Button, Box, Typography, TextField } from "@mui/material";
-import { Formik, Form } from "formik";
+import { Formik, Form, Field } from "formik";
 import axios from 'axios'; // Importa axios para fazer solicitações HTTP
 import "./style.css";
 
@@ -14,9 +14,8 @@ const Conversor = () => {
     const [fileUploaded, setFileUploaded] = useState(false);
     const location = useLocation();
     const comandoSelecionado = location.state?.comando || "insert";
-    const usuarioId = '123'; // Defina o ID do usuário aqui, ou obtenha-o conforme necessário
 
-    const handleFileUpload = async (file) => {
+    const handleFileUpload = async (file, tableName) => {
         if (!file) {
             console.error("Nenhum arquivo selecionado.");
             return;
@@ -68,10 +67,12 @@ const Conversor = () => {
         // Enviar dados para o servidor
         try {
             const formData = new FormData();
-            const token = 'jsdajhhdajshdahdasda8723119091874@@@@';
-            formData.append('file', file); // Enviar o arquivo
-            formData.append('usuarioId', usuarioId); // Enviar o ID do usuário
+            const token = 'jsdajhhdajshdahdasda8723119091874@@@@'
+            formData.append('arquivo', file); // Enviar o arquivo
+            formData.append('tableName', tableName); // Enviar o nome da tabela
             
+            
+
             const response = await axios.post('http://localhost:3000/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -96,11 +97,13 @@ const Conversor = () => {
                     </Typography>
                     <Formik
                         initialValues={{
-                            arquivo: null
+                            arquivo: null,
+                            tabela: '',
+                            colunaDelete: ''
                         }}
                         onSubmit={(values) => {
-                            if (values.arquivo) {
-                                handleFileUpload(values.arquivo);
+                            if (values.arquivo && values.tabela) {
+                                handleFileUpload(values.arquivo, values.tabela);
                             }
                         }}
                     >
@@ -116,6 +119,15 @@ const Conversor = () => {
                                     }}
                                     className="input-arquivo"
                                     required
+                                />
+                                <TextField
+                                    id="nomeTabela"
+                                    name="tabela"
+                                    label="Nome da Tabela"
+                                    value={formik.values.tabela}
+                                    onChange={formik.handleChange}
+                                    required
+                                    sx={{ marginBottom: 2, marginTop: 8, width: '460px', marginLeft: '30%'}}
                                 />
                                 <Button type="submit" variant="contained" color="primary">
                                     Carregar Arquivo
@@ -135,7 +147,7 @@ const Conversor = () => {
                                     const deleteCommands = fileData.map(row => {
                                         const valor = row[selectedColumn];
                                         if (valor) {
-                                            return `DELETE FROM ${tableName} WHERE ${selectedColumn} = '${valor}';`;
+                                            return `DELETE FROM ${formik.values.tabela} WHERE ${selectedColumn} = '${valor}';`;
                                         } else {
                                             console.error(`Valor vazio ou inválido na coluna ${selectedColumn} para o registro:`, row);
                                             return null;

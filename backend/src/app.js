@@ -28,15 +28,15 @@ app.use("/registro", rotaRegistro);
 app.use("/login", rotaLogin);
 app.use("/usuario/:id", rotaUsuario);
 
-app.post("/upload", upload.single("file"), async(req, res) => {
+app.post("/upload", autenticarToken, upload.single("file"), async(req, res) => {
     try {
-        //const { caminhoArquivo, usuarioId } = req.body; // Recebe os dados do frontend
-
         // Cria uma nova entrada na tabela Planilha
 
-        console.log(Planilha)
+        const usuarioId = req.user.id;
 
-        const {usuarioId} = req.body;
+        if (!usuarioId) {
+            return res.status(400).json({ message: 'Usuário não autenticado' });
+        }
 
         const novaPlanilha = await Planilha.create({
             caminhoArquivo: req.file.path,
