@@ -10,13 +10,13 @@ const Planilha = sequelize.define('planilha', {
         autoIncrement: true,
         allowNull: false,
     },
-    nomeArquivo: {
+    caminhoArquivo: {
         type: DataTypes.STRING,
         allowNull: false,
     },
     dataUpload: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
         defaultValue: Sequelize.NOW, // Data do upload preenchida automaticamente
     },
     usuarioId: {
