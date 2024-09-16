@@ -32,8 +32,10 @@ const realizarLogin = async (req, res) => {
             secret,
             { expiresIn: '1h' } // Adicionando tempo de expiração
         );
-        res.status(200).json({mensagem: "Autenticação realizada com sucesso!", token});
-    } catch (error) {
+
+        res.status(200).json({mensagem: "Autenticação realizada com sucesso!", token, usuario: {id: usuarioExiste.id, nome: usuarioExiste.nome, email: usuarioExiste.email}});
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({mensagem: "Aconteceu um erro no servidor, tente novamente mais tarde!"});
     }

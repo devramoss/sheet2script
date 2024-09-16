@@ -22,13 +22,14 @@ h2 {
     margin: 20px auto 0 auto; /* Centraliza horizontalmente */
     height: 200px;
 }
-#botaoGerar {
+.botaoGerar {
     margin-top: 20px;
     background-color: #0095BA;
     color: white;
     margin-left: 47%;
     margin-right: 47%;
-    width: 6%;
+    width: 60%;
+    padding: 10px 20px;
 }
 
 #background {
@@ -37,4 +38,21 @@ h2 {
     margin-top: 45px;
     margin-bottom: 45px;
 }
+
+.botao-enviar {
+    background-color: #0095BA;
+    color: white;
+    margin-top: 66px;
+    margin-left: 30%;
+    margin-right: 30%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    width: 40%;
+    
+  }
+
+  #nomeTabela{
+    width: 100%;
+  }
 

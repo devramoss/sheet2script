@@ -1,11 +1,11 @@
-import React, { useState} from 'react'; 
+import React, { useState } from 'react'; 
 import { useLocation } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import Header from '../../components/Header/index.jsx';
 import { Container, Button, Box, Typography, TextField } from "@mui/material";
 import { Formik, Form, Field } from "formik";
+import axios from 'axios'; // Importa axios para fazer solicitações HTTP
 import "./style.css";
-
 
 const Conversor = () => {
     const [sqlCommands, setSqlCommands] = useState([]);
@@ -15,55 +15,78 @@ const Conversor = () => {
     const location = useLocation();
     const comandoSelecionado = location.state?.comando || "insert";
 
-    const handleFileUpload = (file, tableName) => {
-        const reader = new FileReader(); 
-
-        reader.onload = (event) => {
-            const data = new Uint8Array(event.target.result); 
-            const workbook = XLSX.read(data, { type: 'array' }); // Lê o arquivo e converte para um objeto do tipo workbook
-            const sheetName = workbook.SheetNames[0]; // Pega o nome da primeira aba
-            const worksheet = workbook.Sheets[sheetName]; // Pega a primeira aba(planilha)
-            const json = XLSX.utils.sheet_to_json(worksheet); // Converte a planilha em um objeto JSON
-
-            if (json.length > 0) {
-                const colunasDetectadas = Object.keys(json[0]); // Pega as chaves do primeiro registro
+    const handleFileUpload = async (file, tableName) => {
+        if (!file) {
+            console.error("Nenhum arquivo selecionado.");
+            return;
+        }
     
+        const reader = new FileReader();
+    
+        reader.onload = async (event) => {
+            const data = new Uint8Array(event.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet);
+    
+            if (json.length > 0) {
+                const colunasDetectadas = Object.keys(json[0]);
                 setColunas(colunasDetectadas);
                 setFileData(json);
                 setFileUploaded(true);
-
+    
                 let commands = [];
-
+    
                 if (comandoSelecionado === "insert") {
                     commands = json.map(row => {
-                        // Mapeia os valores de cada coluna e adiciona aspas simples
                         const valores = colunasDetectadas.map(coluna => `'${row[coluna] || ''}'`);
-                        
                         return `INSERT INTO ${tableName} (${colunasDetectadas.join(', ')}) VALUES (${valores.join(', ')});`;
                     });
-                }
-                else if (comandoSelecionado === "update") {
+                } else if (comandoSelecionado === "update") {
                     commands = json.map(row => {
-                        // Mapeia as colunas e valores para o comando UPDATE
                         const setClause = colunasDetectadas.map(coluna => `${coluna} = '${row[coluna] || ''}'`).join(', ');
-                        const idValue = row.id || row.ID || ''; // Verifica se existe uma coluna chamada 'id' ou 'ID' no registro
-
+                        const idValue = row.id || row.ID || '';
                         if (idValue) {
                             return `UPDATE ${tableName} SET ${setClause} WHERE id = '${idValue}';`;
-                        }
-                        else {
+                        } else {
                             console.error("ID vazio ou inválido para o registro:", row);
                             return null;
                         }
                     }).filter(command => command !== null);
                 }
+    
                 setSqlCommands(commands);
             } else {
                 setSqlCommands([]);
             }
         };
+    
         reader.readAsArrayBuffer(file);
+    
+        // Enviar dados para o servidor
+        try {
+            const formData = new FormData(); 
+            const token = localStorage.getItem('token'); // Recupera o token do localStorage\
+
+            console.log('Token:', token);
+
+            formData.append('file', file); // Enviar o arquivo
+            //formData.append('tableName', tableName); // Enviar o nome da tabela
+            
+            const response = await axios.post('http://localhost:3000/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Define o tipo de conteúdo
+                    'Authorization': `Bearer ${token}`, // Envia o token no cabeçalho
+                },
+            });
+    
+            console.log('Resposta do servidor:', response.data);
+        } catch (error) {
+            console.error('Erro ao enviar dados para o servidor:', error);
+        }
     };
+    
 
     return (
         <>
@@ -76,26 +99,17 @@ const Conversor = () => {
                     <Formik
                         initialValues={{
                             arquivo: null,
-                            tabela: '', // Adicionando campo para o nome da tabela
+                            tabela: '',
                             colunaDelete: ''
                         }}
                         onSubmit={(values) => {
                             if (values.arquivo && values.tabela) {
-                                handleFileUpload(values.arquivo, values.tabela); // Passa o nome da tabela
+                                handleFileUpload(values.arquivo, values.tabela);
                             }
                         }}
                     >
                         {(formik) => (
                             <Form onSubmit={formik.handleSubmit}>
-                                <TextField
-                                    id="nomeTabela"
-                                    name="tabela"
-                                    label="Nome da Tabela"
-                                    value={formik.values.tabela}
-                                    onChange={formik.handleChange}
-                                    required
-                                    sx={{ mb: 2 }}
-                                />
                                 <input
                                     type="file"
                                     id="inputFile"
@@ -107,7 +121,16 @@ const Conversor = () => {
                                     className="input-arquivo"
                                     required
                                 />
-                                <Button type="submit" id="botaoGerar" className="botao-enviar">
+                                <TextField
+                                    id="nomeTabela"
+                                    name="tabela"
+                                    label="Nome da Tabela"
+                                    value={formik.values.tabela}
+                                    onChange={formik.handleChange}
+                                    required
+                                    sx={{ marginBottom: 2, marginTop: 8, width: '460px', marginLeft: '30%'}}
+                                />
+                                <Button type="submit" variant="contained" color="primary">
                                     Carregar Arquivo
                                 </Button>
                             </Form>
@@ -148,7 +171,7 @@ const Conversor = () => {
                                             </option>
                                         ))}
                                     </Field>
-                                    <Button type="submit" id="botaoGerar" className="botao-enviar" sx={{ mt: 2 }}>
+                                    <Button type="submit" variant="contained" color="primary">
                                         Gerar Comandos DELETE
                                     </Button>
                                 </Form>

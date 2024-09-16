@@ -2,27 +2,24 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-function autenticarToken(req, res, next) {
-  const token = req.headers['authorization'];
+const autenticarToken = (req, res, next) => {
+  const authHeader = req.headers['authorization']; // Recebe o token do header
+  const token = authHeader && authHeader.split(' ')[1]; // Separa o token do header
 
-  if (!token) {
-    return res.status(401).json({
-       error: 'Token não fornecido'
-      });
-  }
+  console.log('Token:', token);
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, usuario) => {
-    if (err) {
-      return res.status(403).json({
-        error: 'Token inválido'
-      });
-    }
+  if (token == null) 
+    return res.sendStatus(401).json({ message: 'Token não fornecido' }); // Retorna erro se o token não for fornecido
 
-    req.usuario = usuario;
-    
-    next();
+  jwt.verify(token, 'jsdajhhdajshdahdasda8723119091874@@@@', (err, user) => {
+      if (err) 
+        return res.sendStatus(403).json({ message: 'Token inválido' }); // Retorna erro se o token for inválido
+        console.log('Usuário:', user);
+        req.user = user; // Adiciona o usuário ao objeto de requisição
+        next();
   });
-}
+};
+
 
 module.exports = autenticarToken;
 

@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { TextField, Button, Typography, Box, Container } from "@mui/material";
 import "./style.css";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 
 const schema = Yup.object().shape({
     email: Yup.string().email("E-mail inválido").required("Campo obrigatório"),
@@ -11,6 +12,8 @@ const schema = Yup.object().shape({
 });
 
 const Login = () => {
+    const navigate = useNavigate(); // Hook para redirecionar o usuário após o login
+
     return (
         <>
             <Header />
@@ -34,7 +37,8 @@ const Login = () => {
                 
                         if (response.ok) {
                             console.log("Login bem-sucedido!", data.token);
-                            localStorage.setItem('token', data.token);
+                            localStorage.setItem('token', data.token); // Armazena o token no localStorage
+                            navigate('/conversor'); 
                         } else {
                             console.error("Erro ao realizar login:", data.mensagem);
                         }
