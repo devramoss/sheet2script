@@ -9,6 +9,8 @@ const path = require('path');
 const planilhaRoutes = require('./rotas/upload'); // Ajuste o caminho conforme a estrutura do seu projeto
 const Planilha = require('./modelos/Planilha'); // Ajuste o caminho conforme a estrutura do seu projeto
 
+
+
 const autenticarToken = require("./middleware/autenticarToken");
 
 const app = express();
@@ -27,6 +29,8 @@ app.use("/files", express.static("uploads"));
 app.use("/registro", rotaRegistro);
 app.use("/login", rotaLogin);
 app.use("/usuario/:id", rotaUsuario);
+
+
 
 app.post("/upload", autenticarToken, upload.single("file"), async(req, res) => {
     try {
